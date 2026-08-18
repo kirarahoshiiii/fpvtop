@@ -4,6 +4,10 @@ btop style terminal monitor for betaflight fcs over msp
 
 this is **not** a fork of [btop](https://github.com/aristocratos/btop)
 
+![demo](assets/demo.gif)
+
+> recorded automatically with [vhs](https://github.com/charmbracelet/vhs) on every release, straight from `fpvtop -d`
+
 ## install
 
 ### archlinux (cachyos, endeavouros, manjaro)
