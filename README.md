@@ -43,6 +43,16 @@ its all client side, nothing leaves your machine and no download required.
 ```sh
 fpvtop             # super hard
 ```
+
+### testing without hardware
+
+`fpv-tester` includes an end to end pty sim so you can run and test it without an actual fc plugged in
+
+```sh
+./tests/run_all.sh
+```
+
+
 ### tags
 
 ```
