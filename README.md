@@ -53,3 +53,5 @@ fpvtop             # super hard
 
 ## license
 mit. see license [here](LICENSE)
+made with <3 and python
+this code will always be open source and free
