@@ -33,7 +33,7 @@ run `fpvtop-cli.exe` from any terminal
 or with python:
 
 ```powershell
-py -m pip install git+https://github.com/kirarahoshiiii/fpvtop
+py -m pip install fpvtop
 ```
 
 > boards show up as a COM port out of the box on windows 10+
@@ -42,10 +42,9 @@ py -m pip install git+https://github.com/kirarahoshiiii/fpvtop
 ### anywhere with python:
 
 ```sh
-pipx install git+https://github.com/kirarahoshiiii/fpvtop
+pipx install fpvtop
 ```
 > `python 3.9+` and `pyserial` required
-> not on pypi (yet), the git url gives you the same thing
 
 ### compiling from source
 
