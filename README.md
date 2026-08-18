@@ -14,9 +14,6 @@ yay -S fpvtop
 paru -S fpvtop
 ```
 
-> the aur upload is still in transit — until it lands, this builds the exact same package:
-> `git clone https://github.com/kirarahoshiiii/fpvtop && cd fpvtop/packaging/aur && makepkg -si`
-
 ### debian (ubuntu, linuxmint, kalilinux)
 
 ```sh
@@ -25,10 +22,10 @@ curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.
 
 ### windows
 
-no python needed — grab **`fpvtop.exe`** and **`fpvtop-cli.exe`** from the
-[latest release](https://github.com/kirarahoshiiii/fpvtop/releases) and keep them
-in the same folder. double click `fpvtop.exe` to open it in windows terminal, or
+no python needed, you can run the app by downloading **`fpvtop.exe`** or **`fpvtop-cli.exe`** from the
+[latest release](https://github.com/kirarahoshiiii/fpvtop/releases) double click `fpvtop.exe` to open it in windows terminal or
 run `fpvtop-cli.exe` from any terminal
+> **note:** upon running the `.exe` you will get a popup, this is because the `.exe` is unsigned, signing it would cost upwards of [$380 a year](https://learn.microsoft.com/en-us/windows/security/operating-system-security/virus-and-threat-protection/microsoft-defender-smartscreen/).
 
 or with python:
 
@@ -36,8 +33,8 @@ or with python:
 py -m pip install fpvtop
 ```
 
-> boards show up as a COM port out of the box on windows 10+
-> use [windows terminal](https://aka.ms/terminal) so the glyphs render right
+> fcs show up as a com port out of the box on windows 10 and higher
+> use the [windows terminal](https://aka.ms/terminal) so the glyphs render right
 
 ### anywhere with python:
 
@@ -93,8 +90,9 @@ includes an end to end pty sim so you can run and test it without an actual fc p
 ```
 
 tab completion for **bash**, **zsh** and **fish** comes with the aur and deb packages
-(completes the tags, your serial ports and your btop themes) — pip/pipx installs can
-grab the files from [`packaging/completions/`](packaging/completions/)
+(completes the tags, your serial ports and your btop themes)
+
+pipx installs can get the completions from [`packaging/completions/`](packaging/completions/)
 
 ## license
 mit. see license [here](LICENSE)
