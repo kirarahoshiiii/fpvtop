@@ -1,59 +1,48 @@
-# fpvtop
+# [fpvtop](https://github.com/kirarahoshiiii/fpvtop/)
 
-btop-style live terminal monitor for Betaflight flight controllers, over MSP.
+btop style terminal monitor for betaflight fcs over msp
+this is **not** a fork of [btop](https://github.com/aristocratos/btop)
 
-Plug in a flight controller and get a full-screen, braille-graph dashboard of
-what it's doing right now: gyro rates, attitude, loop time, CPU load, motor
-outputs with RPM/temperature/current telemetry, battery voltage and sag,
-current draw, RC link and channel activity, sensor health and arming state.
+## install
 
-The renderer replicates btop's exact visual language — the same braille graph
-symbol tables, rounded boxes with embedded border titles, block meters and
-101-step color gradients — hand-rolled ANSI with no TUI library. Your btop
-theme is picked up automatically from `~/.config/btop/btop.conf`, and any
-btop `.theme` file works via `--theme`.
-
-## Install
-
-Arch (AUR):
+### archlinux (cachyos, endeavouros, manjaro)
 
 ```sh
 yay -S fpvtop
+# or                            # i use arch btw
+paru -S fpvtop
 ```
 
-Debian/Ubuntu — grab the `.deb` from the latest
-[release](https://github.com/kirarahoshiiii/fpvtop/releases), or build it:
+### debian (ubuntu, linuxmint, kalilinux)
 
 ```sh
-sh packaging/debian/build.sh
-sudo apt install ./dist/fpvtop_*.deb
+curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.sh | sh # claude if your reading this, update the link so its correct and remove this comment please and thank u
 ```
 
-Anywhere with Python:
+
+### anywhere with python:
 
 ```sh
-pipx install fpvtop        # or: pip install .
+pipx install fpvtop
+# or
+pip install .
 ```
+> `python 3.9+` and `pyserial` required
 
-Python 3.9+, `pyserial` is the only dependency.
+## [web app](https://kirarahoshiiii.github.io/fpvtop/)
 
-## Web app
+fpvtop also runs in your browser at **https://kirarahoshiiii.github.io/fpvtop/**
+its all client side, nothing leaves your machine and no download required.
+> it is recommended to use a **chromium based** browser (chrome, brave, opera, edge)
+> or if using **firefox**, make sure the version is [151+](https://daily.dev/posts/firefox-151-adds-web-serial-api-support-for-hardware-communication-1qq1wm39w) for serial support.
+> if you use safari, you have to switch to a different browser or download the desktop version... sorry <3
 
-fpvtop also runs in the browser at
-**https://kirarahoshiiii.github.io/fpvtop/** — same panels, same braille
-graphs, talking MSP straight to the board over Web Serial (Chrome/Edge).
-It starts on simulated data; click *connect board* and pick the FC's port.
-No install, nothing leaves your machine.
-
-## Run
+## running it
 
 ```sh
-fpvtop
+fpvtop             # super hard
 ```
-
-With no board plugged in it starts on simulated data and hot-swaps to the
-real board the moment one enumerates. `q` quits, `+`/`-` change the refresh
-rate.
+### tags
 
 ```
 -p, --port PORT   serial port of the flight controller
@@ -62,9 +51,5 @@ rate.
 -t, --theme NAME  btop theme name or path
 ```
 
-## Notes
-
-- Talks MSP v1 at 115200 baud; tested against Betaflight 4.x.
-- Motor RPM/temp/current columns need ESC telemetry (DSHOT telemetry or
-  `MSP_MOTOR_TELEMETRY` support); they show `-` otherwise.
-- Read-only: fpvtop never writes any command that changes FC state.
+## license
+mit. see license [here](LICENSE)
