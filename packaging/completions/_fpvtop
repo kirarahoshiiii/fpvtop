@@ -1,0 +1,21 @@
+#compdef fpvtop
+
+_fpvtop_themes() {
+    local -a themes
+    themes=(${(f)"$(command ls $HOME/.config/btop/themes /usr/share/btop/themes 2>/dev/null | sed -n 's/\.theme$//p' | sort -u)"})
+    _describe 'theme' themes
+}
+
+_fpvtop_ports() {
+    local -a ports
+    ports=(/dev/ttyACM*(N) /dev/ttyUSB*(N) /dev/cu.usbmodem*(N))
+    _describe 'port' ports
+}
+
+_arguments \
+    '(-p --port)'{-p,--port}'[serial port of the flight controller]:port:_fpvtop_ports' \
+    '(-d --demo)'{-d,--demo}'[run on simulated data]' \
+    '(-u --update)'{-u,--update}'[update rate in milliseconds]:ms:(50 100 250 500 1000 2000)' \
+    '(-t --theme)'{-t,--theme}'[btop theme name or path]:theme:_fpvtop_themes' \
+    '(-V --version)'{-V,--version}'[show version and exit]' \
+    '(-h --help)'{-h,--help}'[show help and exit]'

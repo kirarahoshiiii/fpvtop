@@ -10,12 +10,18 @@ pkgdir="$stage/fpvtop_${version}-1_all"
 mkdir -p "$pkgdir/DEBIAN" \
          "$pkgdir/usr/lib/python3/dist-packages" \
          "$pkgdir/usr/bin" \
-         "$pkgdir/usr/share/doc/fpvtop"
+         "$pkgdir/usr/share/doc/fpvtop" \
+         "$pkgdir/usr/share/bash-completion/completions" \
+         "$pkgdir/usr/share/zsh/vendor-completions" \
+         "$pkgdir/usr/share/fish/vendor_completions.d"
 
 cp -r "$root/fpvtop" "$pkgdir/usr/lib/python3/dist-packages/"
 rm -rf "$pkgdir/usr/lib/python3/dist-packages/fpvtop/__pycache__"
 cp "$root/LICENSE" "$pkgdir/usr/share/doc/fpvtop/copyright"
 cp "$root/README.md" "$pkgdir/usr/share/doc/fpvtop/"
+cp "$root/packaging/completions/fpvtop.bash" "$pkgdir/usr/share/bash-completion/completions/fpvtop"
+cp "$root/packaging/completions/_fpvtop" "$pkgdir/usr/share/zsh/vendor-completions/_fpvtop"
+cp "$root/packaging/completions/fpvtop.fish" "$pkgdir/usr/share/fish/vendor_completions.d/fpvtop.fish"
 
 cat > "$pkgdir/usr/bin/fpvtop" <<'EOF'
 #!/usr/bin/python3

@@ -1,8 +1,16 @@
 import os
-import select
 import signal
 import sys
-import termios
+import time
+
+WINDOWS = sys.platform == "win32"
+
+if WINDOWS:
+    import ctypes
+    import msvcrt
+else:
+    import select
+    import termios
 
 
 class Fx:
@@ -53,6 +61,11 @@ CLEAR = "\x1b[2J\x1b[0;0f"
 SYNC_START = "\x1b[?2026h"
 SYNC_END = "\x1b[?2026l"
 
+WIN_KEYMAP = {
+    "H": "\x1b[A", "P": "\x1b[B", "M": "\x1b[C", "K": "\x1b[D",
+    "G": "\x1b[H", "O": "\x1b[F",
+}
+
 
 class Term:
     def __init__(self):
@@ -62,17 +75,27 @@ class Term:
         self._saved = None
 
     def init(self):
-        fd = sys.stdin.fileno()
-        try:
-            self._saved = termios.tcgetattr(fd)
-            mode = termios.tcgetattr(fd)
-            mode[3] &= ~(termios.ECHO | termios.ICANON)
-            mode[6][termios.VMIN] = 0
-            mode[6][termios.VTIME] = 0
-            termios.tcsetattr(fd, termios.TCSANOW, mode)
-        except termios.error:
-            self._saved = None
-        signal.signal(signal.SIGWINCH, self._on_winch)
+        if WINDOWS:
+            kernel32 = ctypes.windll.kernel32
+            kernel32.SetConsoleOutputCP(65001)
+            for handle_id in (-11, -12):
+                handle = kernel32.GetStdHandle(handle_id)
+                mode = ctypes.c_uint32()
+                if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+                    kernel32.SetConsoleMode(handle, mode.value | 0x0004)
+        else:
+            fd = sys.stdin.fileno()
+            try:
+                self._saved = termios.tcgetattr(fd)
+                mode = termios.tcgetattr(fd)
+                mode[3] &= ~(termios.ECHO | termios.ICANON)
+                mode[6][termios.VMIN] = 0
+                mode[6][termios.VTIME] = 0
+                termios.tcsetattr(fd, termios.TCSANOW, mode)
+            except termios.error:
+                self._saved = None
+        if hasattr(signal, "SIGWINCH"):
+            signal.signal(signal.SIGWINCH, self._on_winch)
         self.write(ALT_SCREEN + HIDE_CURSOR + CLEAR)
         self.refresh()
 
@@ -90,9 +113,24 @@ class Term:
         return changed
 
     def write(self, text):
-        os.write(sys.stdout.fileno(), text.encode())
+        data = text.encode()
+        if WINDOWS:
+            sys.stdout.buffer.write(data)
+            sys.stdout.buffer.flush()
+        else:
+            os.write(sys.stdout.fileno(), data)
+
+    def _check_size(self):
+        try:
+            size = os.get_terminal_size()
+        except OSError:
+            return
+        if (size.columns, size.lines) != (self.width, self.height):
+            self.resized = True
 
     def read_keys(self, timeout):
+        if WINDOWS:
+            return self._read_keys_win(timeout)
         try:
             ready, _, _ = select.select([sys.stdin], [], [], timeout)
         except (OSError, ValueError):
@@ -122,9 +160,26 @@ class Term:
                 i += 1
         return keys
 
+    def _read_keys_win(self, timeout):
+        deadline = time.monotonic() + timeout
+        keys = []
+        while True:
+            while msvcrt.kbhit():
+                ch = msvcrt.getwch()
+                if ch in ("\x00", "\xe0"):
+                    keys.append(WIN_KEYMAP.get(msvcrt.getwch(), ""))
+                else:
+                    keys.append(ch)
+            if keys:
+                return [k for k in keys if k]
+            self._check_size()
+            if self.resized or time.monotonic() >= deadline:
+                return []
+            time.sleep(min(0.02, max(0.0, deadline - time.monotonic())))
+
     def restore(self):
         self.write(SYNC_END + NORMAL_SCREEN + SHOW_CURSOR + Fx.reset_base)
-        if self._saved is not None:
+        if not WINDOWS and self._saved is not None:
             try:
                 termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, self._saved)
             except termios.error:

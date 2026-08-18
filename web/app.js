@@ -1,5 +1,4 @@
 const state = initialState();
-const demo = new DemoSource();
 let serial = null;
 let updateMs = 100;
 let charW = 8;
@@ -8,6 +7,10 @@ let panels = {};
 
 function el(id) {
   return document.getElementById(id);
+}
+
+function live() {
+  return state.source === "live";
 }
 
 function measureChar() {
@@ -77,7 +80,7 @@ function drawGyro() {
   lines.push(dim("ATT   ") + fg("R" + padLeft(r.toFixed(1), 7) + " P" + padLeft(p.toFixed(1), 7) + " Y" + padLeft(y.toFixed(0), 5)));
   lines.push(dim("I2C   ") + span(state.i2c ? THEME.hi_fg : THEME.main_fg, state.i2c + " errors"));
   panels.info.innerHTML = lines.join("\n");
-  el("gyro-name").textContent = state.ident.name || state.ident.board || "flight controller";
+  el("gyro-name").textContent = live() ? (state.ident.name || state.ident.board || "flight controller") : "no board";
   const badge = el("source-badge");
   badge.textContent = state.source;
   badge.className = "chip badge " + state.source;
@@ -109,19 +112,24 @@ function drawPower() {
 function drawRc() {
   const thr = state.channels[2] || 1000;
   const thrPct = Math.max(0, Math.min(100, (thr - 1000) / 10));
-  const rssi = Math.max(0, Math.min(100, state.rssi));
+  const rssi = Math.max(0, Math.min(100, Math.round(state.rssi)));
   graphs.thr.add(thrPct);
   graphs.rssi.add(rssi);
   const c = graphs.rcC;
+  const left = "↓ rssi " + rssi + "%";
+  const right = "ch " + (state.channels.length || "-");
+  const gap = Math.max(1, c - left.length - right.length);
   const top = dim("↑ thr " + Math.round(thrPct) + "% " + thr + "µs");
-  const bottom = dim("↓ rssi " + rssi + "%") + fg(padLeft("ch " + state.channels.length, c - 11 - String(rssi).length));
+  const bottom = dim(left) + " ".repeat(gap) + fg(right);
   panels.rc.innerHTML = top + "\n" + graphs.thr.html() + "\n" + graphs.rssi.html() + "\n" + bottom;
 }
 
 function drawMotors() {
   const c = graphs.motC;
-  const lines = [span(THEME.title, padRight(" MOT  OUT% " + " ".repeat(Math.max(5, c - 30) - 1) + padLeft("RPM", 7) + padLeft("T", 6) + padLeft("A", 7), c))];
-  state.motors.slice(0, 8).forEach((value, i) => {
+  const mw = Math.max(5, c - 30);
+  const lines = [span(THEME.title, padRight(" MOT  OUT% " + " ".repeat(mw - 1) + padLeft("RPM", 7) + padLeft("T", 6) + padLeft("A", 7), c))];
+  const motors = state.motors.length ? state.motors : Array(4).fill(1000);
+  motors.slice(0, 8).forEach((value, i) => {
     const pctV = Math.max(0, Math.min(100, (value - 1000) / 10));
     const t = state.telem[i] || {};
     lines.push(
@@ -134,11 +142,13 @@ function drawMotors() {
   });
   lines.push("");
   const sensors = ["gyro", "acc", "baro", "mag", "gps"].map((name) => {
-    const ok = state.sensors[name];
+    const ok = live() && state.sensors[name];
     return span(ok ? THEME.proc_misc : THEME.inactive_fg, (ok ? "●" : "○") + " " + name);
   });
   lines.push(" " + sensors.join("  "));
-  if (state.armed) {
+  if (!live()) {
+    lines.push(" " + dim("no board connected"));
+  } else if (state.armed) {
     lines.push(" " + span(THEME.hi_fg, "<b>ARMED</b>"));
   } else if (state.arming.length) {
     lines.push(" " + dim("DISARM ") + span(THEME.hi_fg, state.arming.join(" ")));
@@ -149,12 +159,16 @@ function drawMotors() {
 }
 
 function frame() {
-  if (state.source === "demo") demo.tick(state);
   el("clock").textContent = new Date().toTimeString().slice(0, 8);
-  const up = Math.floor((performance.now() - state.started) / 1000);
-  el("uptime").textContent =
-    "up " + Math.floor(up / 3600) + ":" + String(Math.floor(up / 60) % 60).padStart(2, "0") + ":" + String(up % 60).padStart(2, "0");
+  if (live()) {
+    const up = Math.floor((performance.now() - state.started) / 1000);
+    el("uptime").textContent =
+      "up " + Math.floor(up / 3600) + ":" + String(Math.floor(up / 60) % 60).padStart(2, "0") + ":" + String(up % 60).padStart(2, "0");
+  } else {
+    el("uptime").textContent = "";
+  }
   el("fcid").textContent = [state.ident.variant, state.ident.version].filter(Boolean).join(" ");
+  el("offline-hint").hidden = live();
   drawGyro();
   drawPower();
   drawRc();
@@ -180,6 +194,7 @@ function setup() {
   if (!("serial" in navigator)) {
     btn.disabled = true;
     btn.textContent = "web serial unsupported";
+    el("offline-hint").textContent = "this browser has no Web Serial — use a chromium browser or Firefox 151+ on desktop";
     return;
   }
   btn.onclick = async () => {
@@ -190,12 +205,14 @@ function setup() {
     }
     serial = new SerialSource(state, () => {
       btn.textContent = serial.running ? "disconnect" : "connect board";
+      frame();
     });
     try {
       await serial.connect();
     } catch (e) {
-      state.source = "demo";
+      Object.assign(state, initialState());
     }
+    frame();
   };
 }
 

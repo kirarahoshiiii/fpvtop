@@ -4,6 +4,13 @@
   padding: 0;
 }
 
+@font-face {
+  font-family: "fpvtop mono";
+  src: url("fonts/fpvtop-mono.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 :root {
   --bg: #000000;
   --fg: #cccccc;
@@ -24,9 +31,10 @@ body {
 }
 
 .mono {
-  font-family: "JetBrains Mono", "Cascadia Mono", "DejaVu Sans Mono", monospace;
+  font-family: "fpvtop mono", "DejaVu Sans Mono", "Cascadia Mono", "JetBrains Mono", monospace;
   font-size: 13px;
   line-height: 17px;
+  font-variant-ligatures: none;
 }
 
 header {
@@ -66,6 +74,11 @@ button {
 
 button:hover {
   border-color: var(--dim);
+}
+
+button:focus-visible {
+  outline: 2px solid #77ca9b;
+  outline-offset: 1px;
 }
 
 button:disabled {
@@ -133,14 +146,31 @@ main {
   letter-spacing: 0.5px;
 }
 
-.chip.badge.demo {
-  color: #e2b93d;
-  border-color: #4e3f0e;
+.chip.badge.offline {
+  color: var(--dim);
+  border-color: var(--div);
 }
 
 .chip.badge.live {
   color: #0de756;
   border-color: #1d5c33;
+}
+
+.hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dim);
+  background: var(--bg);
+  border: 1px solid var(--div);
+  border-radius: 8px;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.hint b {
+  color: var(--fg);
 }
 
 .gyro {
@@ -164,7 +194,7 @@ main {
 
 .gyro .sub {
   position: relative;
-  flex: 0 0 46ch;
+  flex: 0 0 auto;
   border: 1px solid var(--div);
   border-radius: 8px;
   padding: 12px 10px 8px;
@@ -223,5 +253,10 @@ footer a {
   }
   .left {
     flex: none;
+  }
+  .hint {
+    white-space: normal;
+    width: 90%;
+    text-align: center;
   }
 }

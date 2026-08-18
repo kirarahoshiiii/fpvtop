@@ -14,19 +14,31 @@ yay -S fpvtop
 paru -S fpvtop
 ```
 
+> the aur upload is still in transit — until it lands, this builds the exact same package:
+> `git clone https://github.com/kirarahoshiiii/fpvtop && cd fpvtop/packaging/aur && makepkg -si`
+
 ### debian (ubuntu, linuxmint, kalilinux)
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.sh | sh # claude if your reading this, update the link so its correct and remove this comment please and thank u
+curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.sh | sh
 ```
 
+### windows
+
+```powershell
+py -m pip install git+https://github.com/kirarahoshiiii/fpvtop
+```
+
+> boards show up as a COM port out of the box on windows 10+
+> use [windows terminal](https://aka.ms/terminal) so the glyphs render right
 
 ### anywhere with python:
 
 ```sh
-pipx install fpvtop
+pipx install git+https://github.com/kirarahoshiiii/fpvtop
 ```
 > `python 3.9+` and `pyserial` required
+> not on pypi (yet), the git url gives you the same thing
 
 ## [web app](https://kirarahoshiiii.github.io/fpvtop/)
 
@@ -60,7 +72,12 @@ fpvtop             # super hard
 -d, --demo        run on simulated data
 -u, --update MS   update rate in milliseconds (default 100)
 -t, --theme NAME  btop theme name or path
+-V, --version     print the version
 ```
+
+tab completion for **bash**, **zsh** and **fish** comes with the aur and deb packages
+(completes the tags, your serial ports and your btop themes) — pip/pipx installs can
+grab the files from [`packaging/completions/`](packaging/completions/)
 
 ## license
 mit. see license [here](LICENSE)
