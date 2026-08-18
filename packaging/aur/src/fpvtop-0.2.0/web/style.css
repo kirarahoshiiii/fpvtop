@@ -1,0 +1,262 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: "fpvtop mono";
+  src: url("fonts/fpvtop-mono.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  --bg: #000000;
+  --fg: #cccccc;
+  --title: #eeeeee;
+  --hi: #b54040;
+  --dim: #606060;
+  --div: #303030;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mono {
+  font-family: "fpvtop mono", "DejaVu Sans Mono", "Cascadia Mono", "JetBrains Mono", monospace;
+  font-size: 13px;
+  line-height: 17px;
+  font-variant-ligatures: none;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--title);
+}
+
+.logo .accent {
+  color: #77ca9b;
+}
+
+header .rate {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dim);
+}
+
+button {
+  background: #111;
+  color: var(--fg);
+  border: 1px solid var(--div);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--dim);
+}
+
+button:focus-visible {
+  outline: 2px solid #77ca9b;
+  outline-offset: 1px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.connect {
+  border-color: #556d59;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 10px 10px;
+  min-height: 0;
+}
+
+.box {
+  position: relative;
+  border: 1px solid var(--box, var(--div));
+  border-radius: 10px;
+  padding: 12px 10px 10px;
+  min-height: 0;
+}
+
+.chip {
+  position: absolute;
+  top: -9px;
+  left: 14px;
+  background: var(--bg);
+  color: var(--title);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0 7px;
+  line-height: 17px;
+}
+
+.chip sup {
+  color: var(--hi);
+  margin-right: 1px;
+}
+
+.chip.bottom {
+  top: auto;
+  bottom: -9px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.chip.name {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  font-weight: 700;
+}
+
+.chip.badge {
+  position: static;
+  border: 1px solid var(--div);
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chip.badge.offline {
+  color: var(--dim);
+  border-color: var(--div);
+}
+
+.chip.badge.live {
+  color: #0de756;
+  border-color: #1d5c33;
+}
+
+.hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dim);
+  background: var(--bg);
+  border: 1px solid var(--div);
+  border-radius: 8px;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.hint b {
+  color: var(--fg);
+}
+
+.gyro {
+  flex: 0 0 32%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gyro .row {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  min-height: 0;
+}
+
+.gyro .big {
+  flex: 1;
+  overflow: hidden;
+  align-self: flex-end;
+}
+
+.gyro .sub {
+  position: relative;
+  flex: 0 0 auto;
+  border: 1px solid var(--div);
+  border-radius: 8px;
+  padding: 12px 10px 8px;
+}
+
+.lower {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  min-height: 0;
+}
+
+.left {
+  flex: 0 0 45%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.left .box {
+  flex: 1;
+  overflow: hidden;
+}
+
+.motors {
+  flex: 1;
+  overflow: hidden;
+}
+
+pre {
+  overflow: hidden;
+}
+
+footer {
+  padding: 4px 14px 8px;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+footer a {
+  color: var(--dim);
+}
+
+@media (max-width: 900px) {
+  body {
+    overflow: auto;
+    height: auto;
+  }
+  .gyro .row,
+  .lower {
+    flex-direction: column;
+  }
+  .gyro .sub {
+    flex: none;
+  }
+  .left {
+    flex: none;
+  }
+  .hint {
+    white-space: normal;
+    width: 90%;
+    text-align: center;
+  }
+}

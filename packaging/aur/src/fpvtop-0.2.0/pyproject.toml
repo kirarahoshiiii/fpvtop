@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fpvtop"
+version = "0.2.0"
+description = "btop-style live terminal monitor for Betaflight flight controllers over MSP"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "kirarahoshiiii" }]
+keywords = ["betaflight", "msp", "fpv", "flight-controller", "monitor", "tui", "btop"]
+dependencies = ["pyserial>=3.4"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Hardware",
+]
+
+[project.scripts]
+fpvtop = "fpvtop.main:run"
+
+[tool.setuptools]
+packages = ["fpvtop"]

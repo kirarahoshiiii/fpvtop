@@ -9,7 +9,7 @@ license=('MIT')
 depends=('python' 'python-pyserial')
 makedepends=('python-build' 'python-installer' 'python-wheel' 'python-setuptools')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('6eac328a6ee944fadc39ed6f80881b911da3acd21a2f73e451a8d725fd78d7d2')
+sha256sums=('f968acbd4f071f46ff69ead7a41364449bc2dcdf930541c49577c9fca36cc840')
 
 build() {
     cd "$pkgname-$pkgver"

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Live btop-style dashboard for Betaflight flight controllers over Web Serial">
+<title>fpvtop</title>
+<link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
+<script src="draw.js"></script>
+<script src="msp.js"></script>
+<script src="sources.js"></script>
+<script src="app.js"></script>
+</head>
+<body>
+<header>
+  <span class="logo">fpv<span class="accent">top</span></span>
+  <span id="source-badge" class="chip badge offline" role="status">offline</span>
+  <span id="clock" class="mono" aria-hidden="true"></span>
+  <span class="rate mono"><button id="rate-minus" aria-label="slower refresh">−</button><span id="rate"></span><button id="rate-plus" aria-label="faster refresh">+</button></span>
+  <button id="connect" class="connect">connect board</button>
+</header>
+<main>
+  <section class="box gyro" style="--box:#556d59" aria-label="gyro and loop">
+    <span class="chip title"><sup aria-hidden="true">1</sup>gyro</span>
+    <div class="row">
+      <pre id="gyro-big" class="mono big" aria-hidden="true"></pre>
+      <div class="sub">
+        <span class="chip name" id="gyro-name"></span>
+        <pre id="gyro-info" class="mono"></pre>
+      </div>
+    </div>
+    <div id="offline-hint" class="hint mono">no board connected — click <b>connect board</b> and pick the FC's serial port</div>
+    <span class="chip bottom mono" id="uptime"></span>
+  </section>
+  <div class="lower">
+    <div class="left">
+      <section class="box power" style="--box:#6c6c4b" aria-label="battery and power">
+        <span class="chip title"><sup aria-hidden="true">2</sup>power</span>
+        <pre id="power-pre" class="mono"></pre>
+      </section>
+      <section class="box rc" style="--box:#5c588d" aria-label="rc link">
+        <span class="chip title"><sup aria-hidden="true">3</sup>rc link</span>
+        <pre id="rc-pre" class="mono"></pre>
+      </section>
+    </div>
+    <section class="box motors" style="--box:#805252" aria-label="motors and arming">
+      <span class="chip title"><sup aria-hidden="true">4</sup>motors</span>
+      <pre id="motors-pre" class="mono"></pre>
+      <span class="chip bottom mono" id="fcid"></span>
+    </section>
+  </div>
+</main>
+<footer>
+  read-only MSP monitor · web serial needs a chromium browser or Firefox 151+ on desktop ·
+  <a href="https://github.com/kirarahoshiiii/fpvtop">github</a>
+</footer>
+</body>
+</html>
