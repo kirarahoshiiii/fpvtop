@@ -15,11 +15,35 @@ btop `.theme` file works via `--theme`.
 
 ## Install
 
+Arch (AUR):
+
 ```sh
-pip install .
+yay -S fpvtop
+```
+
+Debian/Ubuntu — grab the `.deb` from the latest
+[release](https://github.com/kirarahoshiiii/fpvtop/releases), or build it:
+
+```sh
+sh packaging/debian/build.sh
+sudo apt install ./dist/fpvtop_*.deb
+```
+
+Anywhere with Python:
+
+```sh
+pipx install fpvtop        # or: pip install .
 ```
 
 Python 3.9+, `pyserial` is the only dependency.
+
+## Web app
+
+fpvtop also runs in the browser at
+**https://kirarahoshiiii.github.io/fpvtop/** — same panels, same braille
+graphs, talking MSP straight to the board over Web Serial (Chrome/Edge).
+It starts on simulated data; click *connect board* and pick the FC's port.
+No install, nothing leaves your machine.
 
 ## Run
 
