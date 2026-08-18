@@ -32,7 +32,7 @@ pip install .
 
 ## [web app](https://kirarahoshiiii.github.io/fpvtop/)
 
-fpvtop also runs in your browser at **https://kirarahoshiiii.github.io/fpvtop/**
+fpvtop also runs in your browser [here](https://kirarahoshiiii.github.io/fpvtop/),
 its all client side, nothing leaves your machine and no download required.
 > it is recommended to use a **chromium based** browser (chrome, brave, opera, edge)
 > or if using **firefox**, make sure the version is [151+](https://daily.dev/posts/firefox-151-adds-web-serial-api-support-for-hardware-communication-1qq1wm39w) for serial support.
