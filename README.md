@@ -25,17 +25,17 @@ curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.
 
 ```sh
 pipx install fpvtop
-# or
-pip install .
 ```
 > `python 3.9+` and `pyserial` required
 
 ## [web app](https://kirarahoshiiii.github.io/fpvtop/)
 
-fpvtop also runs in your browser [here](https://kirarahoshiiii.github.io/fpvtop/),
+fpvtop also runs in your browser [here](https://kirarahoshiiii.github.io/fpvtop/)
+
 its all client side, nothing leaves your machine and no download required.
 > it is recommended to use a **chromium based** browser (chrome, brave, opera, edge)
 > or if using **firefox**, make sure the version is [151+](https://daily.dev/posts/firefox-151-adds-web-serial-api-support-for-hardware-communication-1qq1wm39w) for serial support.
+
 > if you use safari, you have to switch to a different browser or download the desktop version... sorry <3
 
 ## running it
@@ -54,5 +54,7 @@ fpvtop             # super hard
 
 ## license
 mit. see license [here](LICENSE)
+
 made with <3 and python
+
 this code will always be open source and free
