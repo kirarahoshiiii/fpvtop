@@ -173,6 +173,12 @@ main {
   color: var(--fg);
 }
 
+.clip {
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
 .gyro {
   flex: 0 0 32%;
   display: flex;
@@ -194,7 +200,11 @@ main {
 
 .gyro .sub {
   position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 0 0 auto;
+  align-self: flex-start;
+  max-height: 100%;
   border: 1px solid var(--div);
   border-radius: 8px;
   padding: 12px 10px 8px;
@@ -215,14 +225,20 @@ main {
   min-height: 0;
 }
 
-.left .box {
+.left .power {
+  flex: 0 0 auto;
+}
+
+.left .rc {
   flex: 1;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .motors {
   flex: 1;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 pre {

@@ -30,3 +30,40 @@ jobs:
             dist/*.tar.gz
             dist/*.deb
           generate_release_notes: true
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build exes
+        run: |
+          python -m pip install pyinstaller .
+          pyinstaller --onefile --console --name fpvtop-cli --collect-submodules serial packaging/windows/cli.py
+          pyinstaller --onefile --windowed --name fpvtop packaging/windows/launcher.py
+      - name: Upload exes
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/fpvtop-cli.exe
+            dist/fpvtop.exe
+
+  pypi:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build wheel and sdist
+        run: |
+          python -m pip install build
+          python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

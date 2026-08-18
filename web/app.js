@@ -2,6 +2,7 @@ const state = initialState();
 let serial = null;
 let updateMs = 100;
 let charW = 8;
+let lineH = 17;
 let graphs = {};
 let panels = {};
 
@@ -19,12 +20,19 @@ function measureChar() {
   probe.className = "mono";
   probe.textContent = "⣿".repeat(20);
   document.body.appendChild(probe);
-  charW = probe.getBoundingClientRect().width / 20 || 8;
+  const rect = probe.getBoundingClientRect();
+  charW = rect.width / 20 || 8;
+  lineH = rect.height || 17;
   probe.remove();
 }
 
 function cols(element, pad = 0) {
   return Math.max(10, Math.floor(element.clientWidth / charW) - pad);
+}
+
+function innerHeight(box) {
+  const cs = getComputedStyle(box);
+  return box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
 }
 
 function rebuild() {
@@ -34,11 +42,13 @@ function rebuild() {
     power: el("power-pre"), rc: el("rc-pre"), motors: el("motors-pre"),
   };
   const bigC = cols(panels.big, 1);
-  const bigR = Math.max(4, Math.floor(panels.big.clientHeight / 17) - 1);
+  const bigR = Math.max(4, Math.floor(panels.big.parentElement.clientHeight / lineH));
   const infoG = 22;
   const powC = cols(panels.power, 1);
   const rcC = cols(panels.rc, 1);
   const motC = cols(panels.motors, 1);
+  const rcLines = Math.floor(innerHeight(panels.rc.parentElement) / lineH);
+  const rcR = Math.max(2, Math.floor((rcLines - 2) / 2));
   graphs = {
     big: new Graph(bigC, bigR, GRADIENTS.cpu),
     gx: new Graph(infoG, 1, GRADIENTS.cpu),
@@ -49,11 +59,14 @@ function rebuild() {
     volt: new Graph(powC - 7, 1, GRADIENTS.available, false, true),
     amp: new Graph(powC - 7, 1, GRADIENTS.used, false, true),
     usedMeter: new MeterDraw(powC - 7, GRADIENTS.used),
-    thr: new Graph(rcC, 4, GRADIENTS.download),
-    rssi: new Graph(rcC, 4, GRADIENTS.upload, true),
+    thr: new Graph(rcC, rcR, GRADIENTS.download),
+    rssi: new Graph(rcC, rcR, GRADIENTS.upload, true),
     motMeter: new MeterDraw(Math.max(5, motC - 30), GRADIENTS.process),
     motC, powC, rcC,
+    motLines: Math.floor(innerHeight(panels.motors.parentElement) / lineH),
   };
+  const histR = graphs.motLines - 11;
+  graphs.motHist = histR >= 3 ? new Graph(motC, histR, GRADIENTS.process) : null;
 }
 
 function fg(text) {
@@ -155,6 +168,14 @@ function drawMotors() {
   } else {
     lines.push(" " + span(THEME.proc_misc, "ready to arm"));
   }
+  if (graphs.motHist) {
+    const avg = motors.reduce((a, v) => a + Math.max(0, Math.min(100, (v - 1000) / 10)), 0) / motors.length;
+    graphs.motHist.add(avg);
+    if (lines.length + 2 + graphs.motHist.height <= graphs.motLines) {
+      lines.push("", dim(" ↑ avg output"));
+      lines.push(graphs.motHist.html());
+    }
+  }
   panels.motors.innerHTML = lines.join("\n");
 }
 
@@ -183,13 +204,25 @@ function schedule() {
   el("rate").textContent = updateMs + "ms";
 }
 
+let resizeTimer = null;
+
+function relayout() {
+  if (resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { rebuild(); frame(); }, 80);
+}
+
 function setup() {
   rebuild();
   schedule();
   frame();
   el("rate-minus").onclick = () => { updateMs = Math.min(2000, updateMs + 100); schedule(); };
   el("rate-plus").onclick = () => { updateMs = Math.max(50, updateMs - 100); schedule(); };
-  window.addEventListener("resize", () => { rebuild(); frame(); });
+  window.addEventListener("resize", relayout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(relayout);
+    ro.observe(document.querySelector("main"));
+  }
   const btn = el("connect");
   if (!("serial" in navigator)) {
     btn.disabled = true;
@@ -205,6 +238,7 @@ function setup() {
     }
     serial = new SerialSource(state, () => {
       btn.textContent = serial.running ? "disconnect" : "connect board";
+      relayout();
       frame();
     });
     try {

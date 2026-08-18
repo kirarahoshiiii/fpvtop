@@ -25,6 +25,13 @@ curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.
 
 ### windows
 
+no python needed — grab **`fpvtop.exe`** and **`fpvtop-cli.exe`** from the
+[latest release](https://github.com/kirarahoshiiii/fpvtop/releases) and keep them
+in the same folder. double click `fpvtop.exe` to open it in windows terminal, or
+run `fpvtop-cli.exe` from any terminal
+
+or with python:
+
 ```powershell
 py -m pip install git+https://github.com/kirarahoshiiii/fpvtop
 ```
@@ -39,6 +46,16 @@ pipx install git+https://github.com/kirarahoshiiii/fpvtop
 ```
 > `python 3.9+` and `pyserial` required
 > not on pypi (yet), the git url gives you the same thing
+
+### compiling from source
+
+```sh
+git clone https://github.com/kirarahoshiiii/fpvtop
+cd fpvtop
+pip install .
+```
+
+> or skip the install and run it straight from the clone: `python -m fpvtop -d`
 
 ## [web app](https://kirarahoshiiii.github.io/fpvtop/)
 
