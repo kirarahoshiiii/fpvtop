@@ -58,7 +58,8 @@ fpvtop             # super hard
 
 ### testing without hardware
 
-`fpv-tester` includes an end to end pty sim so you can run and test it without an actual fc plugged in
+`fpvtop -d` runs the whole dashboard on simulated flight data, and the test suite
+includes an end to end pty sim so you can run and test it without an actual fc plugged in
 
 ```sh
 ./tests/run_all.sh
