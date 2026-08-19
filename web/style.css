@@ -156,6 +156,13 @@ main {
   border-color: #1d5c33;
 }
 
+.chip.freq {
+  left: auto;
+  right: 14px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
 .hint {
   position: absolute;
   left: 50%;
@@ -179,26 +186,26 @@ main {
   min-height: 0;
 }
 
-.gyro {
+.cpu {
   flex: 0 0 32%;
   display: flex;
   flex-direction: column;
 }
 
-.gyro .row {
+.cpu .row {
   flex: 1;
   display: flex;
   gap: 12px;
   min-height: 0;
 }
 
-.gyro .big {
+.cpu .big {
   flex: 1;
   overflow: hidden;
   align-self: flex-end;
 }
 
-.gyro .sub {
+.cpu .sub {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -260,11 +267,11 @@ footer a {
     overflow: auto;
     height: auto;
   }
-  .gyro .row,
+  .cpu .row,
   .lower {
     flex-direction: column;
   }
-  .gyro .sub {
+  .cpu .sub {
     flex: none;
   }
   .left {

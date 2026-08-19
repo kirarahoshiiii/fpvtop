@@ -11,10 +11,11 @@ def fit(text, width):
     return text.ljust(width)
 
 
-class GyroBox:
+class CpuBox:
     def __init__(self, theme):
         self.theme = theme
         self.last_ident = None
+        self.history = []
 
     def resize(self, x, y, w, h):
         self.x, self.y, self.w, self.h = x, y, w, h
@@ -27,19 +28,26 @@ class GyroBox:
         self.row_gw = max(5, self.sb_w - 20)
         t = self.theme
         self.big = Graph(self.gw, self.gh, t.g("cpu"))
-        self.gx = Graph(self.row_gw, 1, t.g("cpu"))
-        self.gy = Graph(self.row_gw, 1, t.g("cpu"))
-        self.gz = Graph(self.row_gw, 1, t.g("cpu"))
+        self.gcore = Graph(self.row_gw, 1, t.g("cpu"))
         self.gloop = Graph(self.row_gw, 1, t.g("temp"))
-        self.cpu_meter = Meter(self.row_gw, t.g("cpu"), t.c("meter_bg"))
         self.last_ident = None
+
+    def load_avg(self, now, load):
+        self.history.append((now, load))
+        while self.history and now - self.history[0][0] > 900:
+            self.history.pop(0)
+        avgs = []
+        for span in (60, 300, 900):
+            samples = [v for ts, v in self.history if now - ts <= span]
+            avgs.append(sum(samples) / len(samples) if samples else 0.0)
+        return avgs
 
     def static(self, st):
         t = self.theme
         ident = st["ident"]
         name = ident.get("name") or ident.get("board") or "flight controller"
         out = [create_box(self.x, self.y, self.w, self.h, t, t.c("cpu_box"),
-                          True, "gyro", "", 1)]
+                          True, "cpu", "", 1)]
         out.append(create_box(self.sb_x, self.sb_y, self.sb_w, self.sb_h, t,
                               "", False, name[:self.sb_w - 8]))
         port = st.get("port")
@@ -73,30 +81,28 @@ class GyroBox:
                        + Fx.ub + line_color + Sym.TITLE_RIGHT + Fx.reset)
         else:
             out.append(Mv.to(self.y, self.x + 9) + line_color + Sym.H_LINE * 6 + Fx.reset)
-        gx, gy, gz = st["gyro"]
-        mag = (gx * gx + gy * gy + gz * gz) ** 0.5
-        self.big.add(clamp(int(mag / 5), 0, 100))
+        load = clamp(int(st["cpuload"]), 0, 100)
+        cycle = st["cycle"]
+        freq = 1000.0 / cycle if cycle else 0.0
+        badge = "%.1f kHz" % freq
+        out.append(Mv.to(self.y, self.x + self.w - len(badge) - 17)
+                   + embed_title(t, line_color, badge))
+        self.big.add(load)
         out.append(Mv.to(self.y + 1, self.x + 1) + self.big())
         up = int(time.monotonic() - st["started"])
         out.append(Mv.to(self.y + self.h - 2, self.x + 2) + t.c("graph_text")
                    + "up %d:%02d:%02d" % (up // 3600, up % 3600 // 60, up % 60) + Fx.reset)
         rows = []
-        for label, graph, value in (("GYR X", self.gx, gx), ("GYR Y", self.gy, gy),
-                                    ("GYR Z", self.gz, gz)):
-            graph.add(clamp(int(abs(value) / 3), 0, 100))
-            rows.append(t.c("graph_text") + label + " " + Fx.reset + graph()
-                        + t.c("main_fg") + "%7.0f" % value + t.c("graph_text") + "°/s" + Fx.reset)
-        self.gloop.add(clamp(int(st["cycle"] / 10), 0, 100))
+        self.gcore.add(load)
+        rows.append(t.c("graph_text") + "C0    " + Fx.reset + self.gcore()
+                    + t.c("main_fg") + "%6d" % load + t.c("graph_text") + "%  " + Fx.reset)
+        self.gloop.add(clamp(int(cycle / 10), 0, 100))
         rows.append(t.c("graph_text") + "LOOP  " + Fx.reset + self.gloop()
-                    + t.c("main_fg") + "%6d" % st["cycle"] + t.c("graph_text") + "µs " + Fx.reset)
-        rows.append(t.c("graph_text") + "CPU   " + Fx.reset + self.cpu_meter(st["cpuload"])
-                    + t.c("main_fg") + "%6d" % st["cpuload"] + t.c("graph_text") + "%  " + Fx.reset)
-        roll, pitch, yaw = st["att"]
-        rows.append(t.c("graph_text") + "ATT   " + t.c("main_fg")
-                    + "R%+7.1f P%+7.1f Y%4.0f" % (roll, pitch, yaw) + Fx.reset)
-        i2c_color = t.c("main_fg") if st["i2c"] == 0 else t.c("hi_fg")
-        rows.append(t.c("graph_text") + "I2C   " + i2c_color
-                    + "%d errors" % st["i2c"] + Fx.reset)
+                    + t.c("main_fg") + "%6d" % cycle + t.c("graph_text") + "µs " + Fx.reset)
+        avgs = self.load_avg(time.monotonic(), load)
+        rows.append("")
+        rows.append(t.c("main_fg") + Fx.b + "Load AVG:" + Fx.ub
+                    + t.c("main_fg") + " %3.0f%% %3.0f%% %3.0f%%" % tuple(avgs) + Fx.reset)
         inner = self.sb_h - 2
         pad = " " * (self.sb_w - 2)
         for i in range(inner):

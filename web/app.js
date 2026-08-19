@@ -38,7 +38,7 @@ function innerHeight(box) {
 function rebuild() {
   measureChar();
   panels = {
-    big: el("gyro-big"), info: el("gyro-info"),
+    big: el("cpu-big"), info: el("cpu-info"),
     power: el("power-pre"), rc: el("rc-pre"), motors: el("motors-pre"),
   };
   const bigC = cols(panels.big, 1);
@@ -51,11 +51,8 @@ function rebuild() {
   const rcR = Math.max(2, Math.floor((rcLines - 2) / 2));
   graphs = {
     big: new Graph(bigC, bigR, GRADIENTS.cpu),
-    gx: new Graph(infoG, 1, GRADIENTS.cpu),
-    gy: new Graph(infoG, 1, GRADIENTS.cpu),
-    gz: new Graph(infoG, 1, GRADIENTS.cpu),
+    core: new Graph(infoG, 1, GRADIENTS.cpu),
     loop: new Graph(infoG, 1, GRADIENTS.temp),
-    cpuMeter: new MeterDraw(infoG, GRADIENTS.cpu),
     volt: new Graph(powC - 7, 1, GRADIENTS.available, false, true),
     amp: new Graph(powC - 7, 1, GRADIENTS.used, false, true),
     usedMeter: new MeterDraw(powC - 7, GRADIENTS.used),
@@ -77,23 +74,32 @@ function dim(text) {
   return span(THEME.graph_text, text);
 }
 
-function drawGyro() {
-  graphs.big.add(Math.min(100, Math.hypot(...state.gyro) / 5));
+const loadHistory = [];
+
+function loadAvg(now, load) {
+  loadHistory.push([now, load]);
+  while (loadHistory.length && now - loadHistory[0][0] > 900000) loadHistory.shift();
+  return [60000, 300000, 900000].map((span) => {
+    const samples = loadHistory.filter(([ts]) => now - ts <= span).map(([, v]) => v);
+    return samples.length ? Math.round(samples.reduce((a, v) => a + v, 0) / samples.length) : 0;
+  });
+}
+
+function drawCpu() {
+  const load = Math.max(0, Math.min(100, Math.round(state.cpuload)));
+  graphs.big.add(load);
   panels.big.innerHTML = graphs.big.html();
   const lines = [];
-  const axes = [["GYR X", graphs.gx], ["GYR Y", graphs.gy], ["GYR Z", graphs.gz]];
-  axes.forEach(([label, graph], i) => {
-    graph.add(Math.min(100, Math.abs(state.gyro[i]) / 3));
-    lines.push(dim(label + " ") + graph.html() + fg(padLeft(state.gyro[i].toFixed(0), 7)) + dim("°/s"));
-  });
+  graphs.core.add(load);
+  lines.push(dim("C0    ") + graphs.core.html() + fg(padLeft(load, 6)) + dim("%"));
   graphs.loop.add(Math.min(100, state.cycle / 10));
   lines.push(dim("LOOP  ") + graphs.loop.html() + fg(padLeft(state.cycle, 6)) + dim("µs"));
-  lines.push(dim("CPU   ") + graphs.cpuMeter.html(state.cpuload) + fg(padLeft(state.cpuload, 6)) + dim("%"));
-  const [r, p, y] = state.att;
-  lines.push(dim("ATT   ") + fg("R" + padLeft(r.toFixed(1), 7) + " P" + padLeft(p.toFixed(1), 7) + " Y" + padLeft(y.toFixed(0), 5)));
-  lines.push(dim("I2C   ") + span(state.i2c ? THEME.hi_fg : THEME.main_fg, state.i2c + " errors"));
+  const avgs = loadAvg(performance.now(), load);
+  lines.push("");
+  lines.push(span(THEME.title, "<b>Load AVG:</b>") + fg(" " + avgs.map((v) => padLeft(v + "%", 4)).join("")));
   panels.info.innerHTML = lines.join("\n");
-  el("gyro-name").textContent = live() ? (state.ident.name || state.ident.board || "flight controller") : "no board";
+  el("cpu-freq").textContent = state.cycle ? (1000 / state.cycle).toFixed(1) + " kHz" : "";
+  el("cpu-name").textContent = live() ? (state.ident.name || state.ident.board || "flight controller") : "no board";
   const badge = el("source-badge");
   badge.textContent = state.source;
   badge.className = "chip badge " + state.source;
@@ -190,7 +196,7 @@ function frame() {
   }
   el("fcid").textContent = [state.ident.variant, state.ident.version].filter(Boolean).join(" ");
   el("offline-hint").hidden = live();
-  drawGyro();
+  drawCpu();
   drawPower();
   drawRc();
   drawMotors();

@@ -4,7 +4,7 @@ import time
 
 from . import __version__
 from . import symbols as Sym
-from .boxes import GyroBox, MotorsBox, PowerBox, RcBox
+from .boxes import CpuBox, MotorsBox, PowerBox, RcBox
 from .draw import embed_title
 from .sources import Collector, State
 from .terminal import CLEAR, SYNC_END, SYNC_START, Fx, Mv, Term
@@ -21,7 +21,7 @@ class App:
         self.update_ms = max(50, min(5000, args.update))
         self.state = State()
         self.collector = Collector(self.state, force_demo=args.demo, port=args.port)
-        self.gyro = GyroBox(theme)
+        self.cpu = CpuBox(theme)
         self.power = PowerBox(theme)
         self.rc = RcBox(theme)
         self.motors = MotorsBox(theme)
@@ -33,15 +33,15 @@ class App:
         self.too_small = w < MIN_W or h < MIN_H
         if self.too_small:
             return
-        gyro_h = max(8, round(h * 0.32))
+        cpu_h = max(8, round(h * 0.32))
         left_w = round(w * 0.45)
-        lower_h = h - gyro_h
+        lower_h = h - cpu_h
         power_h = (lower_h + 1) // 2
         rc_h = lower_h - power_h
-        self.gyro.resize(1, 1, w, gyro_h)
-        self.power.resize(1, gyro_h + 1, left_w, power_h)
-        self.rc.resize(1, gyro_h + power_h + 1, left_w, rc_h)
-        self.motors.resize(left_w + 1, gyro_h + 1, w - left_w, lower_h)
+        self.cpu.resize(1, 1, w, cpu_h)
+        self.power.resize(1, cpu_h + 1, left_w, power_h)
+        self.rc.resize(1, cpu_h + power_h + 1, left_w, rc_h)
+        self.motors.resize(left_w + 1, cpu_h + 1, w - left_w, lower_h)
 
     def rate_title(self):
         t = self.theme
@@ -60,7 +60,7 @@ class App:
         parts = [Fx.reset]
         if redraw:
             parts.append(self.theme.c("main_bg") + CLEAR)
-        parts.append(self.gyro.draw(st, redraw))
+        parts.append(self.cpu.draw(st, redraw))
         parts.append(self.rate_title())
         parts.append(self.power.draw(st, redraw))
         parts.append(self.rc.draw(st, redraw))

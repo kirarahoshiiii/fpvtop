@@ -43,7 +43,8 @@ def main():
         "left alt screen": b"\x1b[?1049l" in out,
         "drew braille graphs": b"\xe2\xa3" in out or b"\xe2\xa2" in out,
         "drew box borders": "╭".encode() in out,
-        "drew gyro title": b"gyro" in out,
+        "drew cpu title": b"cpu" in out,
+        "drew load avg": b"Load AVG:" in out,
     }
     failures = 0
     for name, ok in checks.items():

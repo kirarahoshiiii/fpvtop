@@ -21,13 +21,14 @@
   <button id="connect" class="connect">connect board</button>
 </header>
 <main>
-  <section class="box gyro" style="--box:#556d59" aria-label="gyro and loop">
-    <span class="chip title"><sup aria-hidden="true">1</sup>gyro</span>
+  <section class="box cpu" style="--box:#556d59" aria-label="fc cpu">
+    <span class="chip title"><sup aria-hidden="true">1</sup>cpu</span>
+    <span class="chip freq mono" id="cpu-freq"></span>
     <div class="row">
-      <pre id="gyro-big" class="mono big" aria-hidden="true"></pre>
+      <pre id="cpu-big" class="mono big" aria-hidden="true"></pre>
       <div class="sub">
-        <span class="chip name" id="gyro-name"></span>
-        <div class="clip"><pre id="gyro-info" class="mono"></pre></div>
+        <span class="chip name" id="cpu-name"></span>
+        <div class="clip"><pre id="cpu-info" class="mono"></pre></div>
       </div>
     </div>
     <div id="offline-hint" class="hint mono">no board connected — click <b>connect board</b> and pick the FC's serial port</div>

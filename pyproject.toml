@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fpvtop"
-version = "0.3.0"
+version = "0.4.0"
 description = "btop-style live terminal monitor for Betaflight flight controllers over MSP"
 readme = "README.md"
 requires-python = ">=3.9"
