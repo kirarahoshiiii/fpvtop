@@ -30,11 +30,8 @@ curl -fsSL https://raw.githubusercontent.com/kirarahoshiiii/fpvtop/main/install.
 scoop bucket add fpvtop https://github.com/kirarahoshiiii/scoop-fpvtop
 scoop install fpvtop
 ```
-
-or no python needed, you can run the app by downloading **`fpvtop.exe`** or **`fpvtop-cli.exe`** from the
-[latest release](https://github.com/kirarahoshiiii/fpvtop/releases) double click `fpvtop.exe` to open it in windows terminal or
-
-run `fpvtop-cli.exe` from any terminal
+or you can run the app by downloading **`fpvtop.exe`** or **`fpvtop-cli.exe`** from the
+[latest release](https://github.com/kirarahoshiiii/fpvtop/releases)
 
 > **note:** upon running the `.exe` you will get a popup, this is because the `.exe` is unsigned, signing it would cost upwards of [$380 a year](https://learn.microsoft.com/en-us/windows/security/operating-system-security/virus-and-threat-protection/microsoft-defender-smartscreen/).
 
@@ -45,7 +42,7 @@ py -m pip install fpvtop
 ```
 
 > fcs show up as a com port out of the box on windows 10 and higher
-> use the [windows terminal](https://aka.ms/terminal) so the glyphs render right
+> use the [windows terminal](https://aka.ms/terminal) so the glyphs render correctly
 
 ### macos
 
@@ -53,7 +50,8 @@ py -m pip install fpvtop
 brew install kirarahoshiiii/fpvtop/fpvtop
 ```
 
-> installs from the [tap](https://github.com/kirarahoshiiii/homebrew-fpvtop), tab completions included
+> installs from the [tap](https://github.com/kirarahoshiiii/homebrew-fpvtop)
+> tab completions included
 
 ### anywhere with python:
 
