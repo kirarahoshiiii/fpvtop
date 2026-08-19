@@ -17,7 +17,6 @@ yay -S fpvtop
 # or                            # i use arch btw
 paru -S fpvtop
 ```
-> doesnt work yet
 
 ### debian (ubuntu, linuxmint, kalilinux)
 
