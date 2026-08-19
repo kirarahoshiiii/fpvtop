@@ -6,7 +6,7 @@ this is **not** a fork of [btop](https://github.com/aristocratos/btop)
 
 ![demo](assets/demo.gif)
 
-> recorded automatically with [vhs](https://github.com/charmbracelet/vhs) on every release, straight from `fpvtop -d`
+> [vhs](https://github.com/charmbracelet/vhs)
 
 ## install
 
@@ -17,6 +17,7 @@ yay -S fpvtop
 # or                            # i use arch btw
 paru -S fpvtop
 ```
+> doesnt work yet
 
 ### debian (ubuntu, linuxmint, kalilinux)
 
@@ -33,7 +34,9 @@ scoop install fpvtop
 
 or no python needed, you can run the app by downloading **`fpvtop.exe`** or **`fpvtop-cli.exe`** from the
 [latest release](https://github.com/kirarahoshiiii/fpvtop/releases) double click `fpvtop.exe` to open it in windows terminal or
+
 run `fpvtop-cli.exe` from any terminal
+
 > **note:** upon running the `.exe` you will get a popup, this is because the `.exe` is unsigned, signing it would cost upwards of [$380 a year](https://learn.microsoft.com/en-us/windows/security/operating-system-security/virus-and-threat-protection/microsoft-defender-smartscreen/).
 
 or with python:
